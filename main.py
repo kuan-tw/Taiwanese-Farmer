@@ -85,6 +85,7 @@ async def crop_slash(ctx, item: str):
 #/price
 @bot.slash_command(name="price", description="查詢指定作物的今日價格")
 async def price_slash(ctx, item: str):
+    
     now = datetime.datetime.now()
     n_year = now.year - 1911 
     roc_date = now.strftime(f"{n_year}.%m.%d")
@@ -113,7 +114,10 @@ async def price_slash(ctx, item: str):
                 """,
                 inline=True
             )
-        message = await ctx.respond(embed=embed)
+        try:
+            message = await ctx.respond(embed=embed)
+        except:
+            await ctx.respond("Oops! I couldn't find that interaction. Please try again.")
         
         # Add buttons
         view = discord.ui.View(
