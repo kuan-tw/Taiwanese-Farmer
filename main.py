@@ -46,6 +46,7 @@ async def help(ctx):
     embed.add_field(name="**/hello**", value="跟機器人打招呼", inline=False)
     embed.add_field(name="**/crops [農作物]**", value="查詢指定作物的種類及編號", inline=False)
     embed.add_field(name="**/price [農作物]**", value="查詢指定作物的當日價格", inline=False)
+    embed.set_author(name="資料來源", url="https://data.moa.gov.tw/")
     await ctx.respond(embed=embed)
 
 #/hello
@@ -80,13 +81,13 @@ async def crop_slash(ctx, item: str):
         for crop in datas:
             embed.add_field(name=f"{crop['CropCode']} - {crop['CropName']}\n", value="",inline=False)
         await ctx.respond(embed=embed)
-
+        
+#/price
 @bot.slash_command(name="price", description="查詢指定作物的今日價格")
 async def price_slash(ctx, item: str):
     now = datetime.datetime.now()
     n_year = now.year - 1911 
     roc_date = now.strftime(f"{n_year}.%m.%d")
-    print(f"Date: {roc_date}")
     url = f"https://data.moa.gov.tw/api/v1/AgriProductsTransType/?Start_time={roc_date}&End_time={roc_date}&CropName={item}"
     response = requests.get(url)
     data = response.json()
