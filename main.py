@@ -77,10 +77,45 @@ async def crop_slash(ctx, item: str):
         embed=discord.Embed(title="查無此資料", description=f"無法查詢有關**{item}**的資料",color=0xff0000)
         await ctx.respond(embed=embed)
     else:
-        embed=discord.Embed(title="查詢結果",description=f"關於**{item}**的查尋結果",color=random.randint(0, 0xffffff))
-        for crop in datas:
+        page = 1
+        max_page = len(datas) // 10 + (len(datas) % 10 != 0)
+        embed = discord.Embed(title=f"**{item}** 資訊查詢結果 📊",description=f"關於**{item}**的查尋結果",color=random.randint(0, 0xffffff))
+        for i in range((page - 1) * 10, min(page * 10, len(datas))):
+            crop = datas[i]
             embed.add_field(name=f"{crop['CropCode']} - {crop['CropName']}\n", value="",inline=False)
-        await ctx.respond(embed=embed)
+        try:
+            message = await ctx.respond(embed=embed)
+        except:
+            await ctx.respond("Oops! I couldn't find that interaction. Please try again.")
+        
+        # Add buttons
+        view = discord.ui.View(
+            discord.ui.Button(label="上一頁", style=discord.ButtonStyle.blurple, emoji="⬅️", disabled=page == 1, custom_id="previous_page"),
+            discord.ui.Button(label="下一頁", style=discord.ButtonStyle.blurple, emoji="➡️", disabled=page == max_page, custom_id="next_page")
+        )
+        await message.edit(view=view)
+        
+        async def button_callback(interaction):
+            nonlocal page
+            if interaction.data['custom_id'] == 'previous_page':
+                page -= 1
+            elif interaction.data['custom_id'] == 'next_page':
+                page += 1
+            embed = discord.Embed(title=f"**{item}** 資訊查詢結果 📊",description=f"關於**{item}**的查尋結果",color=random.randint(0, 0xffffff))
+            for i in range((page - 1) * 10, min(page * 10, len(datas))):
+                crop = datas[i]
+                embed.add_field(name=f"{crop['CropCode']} - {crop['CropName']}\n", value="",inline=False)
+            if page == max_page:
+                embed.set_footer(text="This is end")
+                view.children[1].disabled = True
+            await interaction.response.edit_message(embed=embed, view=view)
+        
+        async def delete_button_callback(interaction):
+            await interaction.response.edit_message(embed=None, view=None)
+        
+        # Add button click listeners
+        view.children[0].callback = button_callback
+        view.children[1].callback = button_callback
         
 #/price
 @bot.slash_command(name="price", description="查詢指定作物的今日價格")
