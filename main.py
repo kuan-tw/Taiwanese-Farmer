@@ -10,6 +10,8 @@ import urllib.request
 import json
 import datetime
 import asyncio
+# #CHART AREA
+# import matplotlib.pyplot as plt
 
 
 TESTING_MODE = True
@@ -68,7 +70,7 @@ async def ping_slash(ctx):
 
 #/crops
 @bot.slash_command(name="crops", description="顯示指定作物的資訊")
-async def crop_slash(ctx, item: str):
+async def crop_slash(ctx, crop: discord.Option(str, "農作物" )):
     url = f'https://data.moa.gov.tw/api/v1/CropType/?CropName={item}'
     response = requests.get(url)
     data = response.json()
@@ -86,7 +88,7 @@ async def crop_slash(ctx, item: str):
         try:
             message = await ctx.respond(embed=embed)
         except:
-            await ctx.respond("Oops! I couldn't find that interaction. Please try again.")
+            await ctx.respond("Oops! 資料庫錯誤，請稍後在試")
         
         # Add buttons
         view = discord.ui.View(
@@ -119,7 +121,7 @@ async def crop_slash(ctx, item: str):
         
 #/price
 @bot.slash_command(name="price", description="查詢指定作物的今日價格")
-async def price_slash(ctx, item: str):
+async def price_slash(ctx, crop: discord.Option(str, "農作物" )):
     
     now = datetime.datetime.now()
     n_year = now.year - 1911 
@@ -152,7 +154,7 @@ async def price_slash(ctx, item: str):
         try:
             message = await ctx.respond(embed=embed)
         except:
-            await ctx.respond("Oops! I couldn't find that interaction. Please try again.")
+            await ctx.respond("Oops! 資料庫錯誤，請稍後再試")
         
         # Add buttons
         view = discord.ui.View(
@@ -194,15 +196,5 @@ async def price_slash(ctx, item: str):
         view.children[0].callback = button_callback
         view.children[1].callback = button_callback
     
-            
-            
-        
-    
-    
-
-
-
-
-
 
 bot.run(os.getenv('token'))
