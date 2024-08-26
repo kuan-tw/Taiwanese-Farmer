@@ -59,7 +59,7 @@ async def hello_slash(ctx):
 #/invite
 @bot.slash_command(name="invite", description="獲取邀請連結")
 async def invite_slash(ctx):
-    embed=discord.Embed(title="邀請連結", url="https://discord.com/oauth2/authorize?client_id=1275683698754457631&permissions=1759218602344439&integration_type=0&scope=bot", description="Click the title to get link")
+    embed=discord.Embed(title="邀請連結", url="https://discord.com/oauth2/authorize?client_id=1275683698754457631&permissions=2215659520&integration_type=0&scope=bot", description="Click the title to get link")
     await ctx.respond(embed=embed)
     
 #/ping
