@@ -70,7 +70,7 @@ async def ping_slash(ctx):
 
 #/crops
 @bot.slash_command(name="crops", description="顯示指定作物的資訊")
-async def crop_slash(ctx, crop: discord.Option(str, "農作物" )):
+async def crop_slash(ctx, item: discord.Option(str, "農作物" )):
     url = f'https://data.moa.gov.tw/api/v1/CropType/?CropName={item}'
     response = requests.get(url)
     data = response.json()
@@ -121,7 +121,7 @@ async def crop_slash(ctx, crop: discord.Option(str, "農作物" )):
         
 #/price
 @bot.slash_command(name="price", description="查詢指定作物的今日價格")
-async def price_slash(ctx, crop: discord.Option(str, "農作物" )):
+async def price_slash(ctx, item: discord.Option(str, "農作物" )):
     
     now = datetime.datetime.now()
     n_year = now.year - 1911 
